@@ -1,8 +1,60 @@
 #include "hw1.h"
 
 void print_packet_sf(unsigned char packet[])
-{
-    (void)packet;
+{   
+    //source address
+    unsigned int src_addr = 0;
+    src_addr = packet[0] << 20;
+    src_addr |= packet[1] << 12;
+    src_addr |= packet[2] << 4;
+    src_addr |= packet[3] >>4;
+
+    //destination address
+    unsigned int dest_addr = 0;
+    dest_addr = (packet[3] & 0b1111) << 24;
+    dest_addr |= packet[4] << 16;
+    dest_addr |= packet[5] << 8;
+    dest_addr |= packet[6];
+    
+    //source port
+    unsigned int source_port = 0;
+    source_port |= packet[7] >>4;
+
+    //destination port
+    unsigned int dest_port = 0;
+    dest_port |= (packet[7] & 0b1111);
+
+    //fragment offset
+    unsigned int frag_offset = 0;
+    frag_offset |= packet[8] << 6;
+    frag_offset |= packet[9] >> 2;
+
+    //packet length
+    unsigned int packet_len = 0;
+    packet_len |= (packet[9] & 0b00000011) << 12;
+    packet_len |= packet[10] << 4;
+    packet_len |= packet[11] >> 4;
+
+    //maximum hop count
+    unsigned int max_hop_count = 0;
+    max_hop_count |= (packet[11] & 0b00001111) << 1;
+    max_hop_count |= packet[12] >> 7;
+
+    //checksum
+    unsigned int checksum = 0;
+    checksum |= (packet[12] & 0b01111111) << 16; 
+    checksum |= packet[13] <<14;
+    checksum |= packet[14];
+
+    //compression scheme;
+    unsigned int compression_scheme = 0;
+    compression_scheme |= packet[15] >> 6;
+
+    //traffic class
+    unsigned int traffic_class = 0;
+    traffic_class |= (packet[15] & 0b00111111);
+
+    
 }
 
 unsigned int compute_checksum_sf(unsigned char packet[])
