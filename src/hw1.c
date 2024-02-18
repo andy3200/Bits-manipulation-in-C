@@ -11,7 +11,7 @@ void print_packet_sf(unsigned char packet[])
 
     //destination address
     unsigned int dest_addr = 0;
-    dest_addr = (packet[3] & 0b1111) << 24;
+    dest_addr = (packet[3] & 0xF) << 24;
     dest_addr |= packet[4] << 16;
     dest_addr |= packet[5] << 8;
     dest_addr |= packet[6];
@@ -22,7 +22,7 @@ void print_packet_sf(unsigned char packet[])
 
     //destination port
     unsigned int dest_port = 0;
-    dest_port |= (packet[7] & 0b1111);
+    dest_port |= (packet[7] & 0xF);
 
     //fragment offset
     unsigned int frag_offset = 0;
@@ -31,18 +31,18 @@ void print_packet_sf(unsigned char packet[])
 
     //packet length
     unsigned int packet_len = 0;
-    packet_len |= (packet[9] & 0b00000011) << 12;
+    packet_len |= (packet[9] & 0x3) << 12;
     packet_len |= packet[10] << 4;
     packet_len |= packet[11] >> 4;
 
     //maximum hop count
     unsigned int max_hop_count = 0;
-    max_hop_count |= (packet[11] & 0b00001111) << 1;
+    max_hop_count |= (packet[11] & 0xF) << 1;
     max_hop_count |= packet[12] >> 7;
 
     //checksum
     unsigned int checksum = 0;
-    checksum |= (packet[12] & 0b01111111) << 16; 
+    checksum |= (packet[12] & 0x7F) << 16; 
     checksum |= packet[13] <<14;
     checksum |= packet[14];
 
@@ -52,13 +52,12 @@ void print_packet_sf(unsigned char packet[])
 
     //traffic class
     unsigned int traffic_class = 0;
-    traffic_class |= (packet[15] & 0b00111111);
+    traffic_class |= (packet[15] & 0x3F);
 
     //payload
     int payload[10];
     int payload_count = 0; 
-    int x,y;
-    for(x = 16, y = 0; x <= packet_len-1; x+= 4, y++){
+    for(unsigned int x = 16, y = 0; x <= packet_len-1; x+= 4, y++){
         payload[y] = packet[x] << 24;
         payload[y] |= packet[x+1] << 16;
         payload[y] |= packet[x+2] << 8;
@@ -71,6 +70,7 @@ void print_packet_sf(unsigned char packet[])
     printf("Source Address: %d\n", src_addr);
     printf("Destination Address: %d\n", dest_addr);
     printf("Source Port: %d\n", source_port);
+    printf("Destination Port: %d\n", dest_port);
     printf("Fragment Offset: %d\n", frag_offset);
     printf("Packet Length: %d\n", packet_len);
     printf("Maximum Hop Count: %d\n", max_hop_count);
