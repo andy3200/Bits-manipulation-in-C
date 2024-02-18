@@ -1,62 +1,80 @@
 #include "hw1.h"
 
-void print_packet_sf(unsigned char packet[])
-{   
+unsigned int src_addr = 0;
+unsigned int dest_addr = 0;
+unsigned int source_port = 0;
+unsigned int dest_port = 0;
+unsigned int frag_offset = 0;
+unsigned int packet_len = 0;
+unsigned int max_hop_count = 0;
+unsigned int checksum = 0;
+unsigned int compression_scheme = 0;
+unsigned int traffic_class = 0;
+int payload[10];
+int payload_count = 0;  
+void get_src_addr(unsigned char packet[]){
     //source address
-    unsigned int src_addr = 0;
     src_addr = packet[0] << 20;
     src_addr |= packet[1] << 12;
     src_addr |= packet[2] << 4;
     src_addr |= packet[3] >>4;
-
+}
+void get_dest_addr(unsigned char packet[]){
     //destination address
-    unsigned int dest_addr = 0;
     dest_addr = (packet[3] & 0xF) << 24;
     dest_addr |= packet[4] << 16;
     dest_addr |= packet[5] << 8;
     dest_addr |= packet[6];
-    
+}
+
+void get_source_port(unsigned char packet[]){
     //source port
-    unsigned int source_port = 0;
     source_port |= packet[7] >>4;
+}
 
+void get_dest_port(unsigned char packet[]){
     //destination port
-    unsigned int dest_port = 0;
     dest_port |= (packet[7] & 0xF);
+}
 
+void get_frag_offset(unsigned char packet[]){
     //fragment offset
-    unsigned int frag_offset = 0;
     frag_offset |= packet[8] << 6;
     frag_offset |= packet[9] >> 2;
+}
 
+void get_packet_len(unsigned char packet[]){
     //packet length
-    unsigned int packet_len = 0;
     packet_len |= (packet[9] & 0x3) << 12;
     packet_len |= packet[10] << 4;
     packet_len |= packet[11] >> 4;
+}
 
+void get_max_hop_count(unsigned char packet[]){
     //maximum hop count
-    unsigned int max_hop_count = 0;
     max_hop_count |= (packet[11] & 0xF) << 1;
     max_hop_count |= packet[12] >> 7;
+}
 
+void get_checksum(unsigned char packet[]){
     //checksum
-    unsigned int checksum = 0;
     checksum |= (packet[12] & 0x7F) << 16; 
     checksum |= packet[13] <<8;
     checksum |= packet[14];
+}
 
+void get_compression_scheme(unsigned char packet[]){
     //compression scheme;
-    unsigned int compression_scheme = 0;
     compression_scheme |= packet[15] >> 6;
+}
 
+void get_traffic_class(unsigned char packet[]){
     //traffic class
     unsigned int traffic_class = 0;
     traffic_class |= (packet[15] & 0x3F);
-
-    //payload
-    int payload[10];
-    int payload_count = 0; 
+}
+void get_payload(unsigned char packet[]){
+    //payload 
     for(unsigned int x = 16, y = 0; x <= packet_len-1; x+= 4, y++){
         payload[y] = packet[x] << 24;
         payload[y] |= packet[x+1] << 16;
@@ -64,9 +82,20 @@ void print_packet_sf(unsigned char packet[])
         payload[y] |= packet[x+3]; 
         payload_count++;
     }
-
-    //printing
-
+}
+    
+void print_packet_sf(unsigned char packet[]){
+    get_src_addr(packet);
+    get_dest_addr(packet);
+    get_source_port( packet);
+    get_dest_port( packet);
+    get_frag_offset( packet);
+    get_packet_len( packet);
+    get_max_hop_count( packet);
+    get_checksum( packet);
+    get_compression_scheme( packet);
+    get_traffic_class(packet);
+    get_payload(packet);
     printf("Source Address: %d\n", src_addr);
     printf("Destination Address: %d\n", dest_addr);
     printf("Source Port: %d\n", source_port);
@@ -85,9 +114,25 @@ void print_packet_sf(unsigned char packet[])
 }
 
 unsigned int compute_checksum_sf(unsigned char packet[])
-{
-    (void)packet;
-    return -1;
+{   
+    int result = 0;
+    int payload_total;
+    get_src_addr(packet);
+    get_dest_addr(packet);
+    get_source_port( packet);
+    get_dest_port( packet);
+    get_frag_offset( packet);
+    get_packet_len( packet);
+    get_max_hop_count( packet);
+    get_compression_scheme( packet);
+    get_traffic_class(packet);
+    get_payload(packet);
+    for(int x =0; x <= payload_count-1; x++){
+        payload_total = payload_total + (abs(payload[x]));
+    }
+    result = src_addr + dest_addr + source_port + dest_port + frag_offset + packet_len + max_hop_count + compression_scheme + traffic_class + payload_total;
+    return result; 
+
 }
 
 unsigned int reconstruct_array_sf(unsigned char *packets[], unsigned int packets_len, int *array, unsigned int array_len) {

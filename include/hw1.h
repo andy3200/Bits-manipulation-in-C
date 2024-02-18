@@ -8,7 +8,17 @@ ANY CHANGES MADE TO THIS FILE WILL BE DISCARDED DURING GRADING!
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+void get_src_addr(unsigned char packet[]);
+void get_dest_addr(unsigned char packet[]);
+void get_source_port(unsigned char packet[]);
+void get_dest_port(unsigned char packet[]);
+void get_frag_offset(unsigned char packet[]);
+void get_packet_len(unsigned char packet[]);
+void get_max_hop_count(unsigned char packet[]);
+void get_checksum(unsigned char packet[]);
+void get_compression_scheme(unsigned char packet[]);
+void get_traffic_class(unsigned char packet[]);
+void get_payload(unsigned char packet[]);
 void print_packet_sf(unsigned char packet[]);
 unsigned int compute_checksum_sf(unsigned char packet[]);
 unsigned int reconstruct_array_sf(unsigned char *packets[], unsigned int packets_len, int *array, unsigned int array_len);
