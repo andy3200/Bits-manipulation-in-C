@@ -43,7 +43,7 @@ void print_packet_sf(unsigned char packet[])
     //checksum
     unsigned int checksum = 0;
     checksum |= (packet[12] & 0x7F) << 16; 
-    checksum |= packet[13] <<14;
+    checksum |= packet[13] <<8;
     checksum |= packet[14];
 
     //compression scheme;
