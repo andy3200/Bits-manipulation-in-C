@@ -54,7 +54,35 @@ void print_packet_sf(unsigned char packet[])
     unsigned int traffic_class = 0;
     traffic_class |= (packet[15] & 0b00111111);
 
-    
+    //payload
+    int payload[10];
+    int payload_count = 0; 
+    int x,y;
+    for(x = 16, y = 0; x <= packet_len-1; x+= 4, y++){
+        payload[y] = packet[x] << 24;
+        payload[y] |= packet[x+1] << 16;
+        payload[y] |= packet[x+2] << 8;
+        payload[y] |= packet[x+3]; 
+        payload_count++;
+    }
+
+    //printing
+
+    printf("Source Address: %d\n", src_addr);
+    printf("Destination Address: %d\n", dest_addr);
+    printf("Source Port: %d\n", source_port);
+    printf("Fragment Offset: %d\n", frag_offset);
+    printf("Packet Length: %d\n", packet_len);
+    printf("Maximum Hop Count: %d\n", max_hop_count);
+    printf("Checksum: %d\n", checksum);
+    printf("Compression Scheme: %d\n", compression_scheme);
+    printf("Traffic Class: %d\n", traffic_class);
+    printf("Payload:");
+    for(int x =0; x <= payload_count-1; x++){
+        printf(" %d", payload[x]);
+    }
+    printf("\n");
+
 }
 
 unsigned int compute_checksum_sf(unsigned char packet[])
