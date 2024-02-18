@@ -129,7 +129,7 @@ unsigned int compute_checksum_sf(unsigned char packet[])
     for(int x =0; x <= payload_count-1; x++){
         payload_total = payload_total + (abs(payload[x]));
     }
-    result = source_addr + destination_addr + source_port + destination_port + fragment_offset + packet_len + max_hop_count + compress_scheme + traff_class + payload_total;
+    result = (source_addr + destination_addr + source_port + destination_port + fragment_offset + packet_len + max_hop_count + compress_scheme + traff_class + payload_total)% (8388607);
     return result; 
 
 }
