@@ -29,22 +29,26 @@ void get_dest_addr(unsigned char packet[]){
 
 void get_source_port(unsigned char packet[]){
     //source port
+    source_port = 0;
     source_port |= packet[7] >>4;
 }
 
 void get_dest_port(unsigned char packet[]){
     //destination port
+    destination_port = 0;
     destination_port |= (packet[7] & 0xF);
 }
 
 void get_frag_offset(unsigned char packet[]){
     //fragment offset
+    fragment_offset = 0;
     fragment_offset |= packet[8] << 6;
     fragment_offset |= packet[9] >> 2;
 }
 
 void get_packet_len(unsigned char packet[]){
     //packet length
+    packet_len = 0;
     packet_len |= (packet[9] & 0x3) << 12;
     packet_len |= packet[10] << 4;
     packet_len |= packet[11] >> 4;
@@ -52,12 +56,14 @@ void get_packet_len(unsigned char packet[]){
 
 void get_max_hop_count(unsigned char packet[]){
     //maximum hop count
+    max_hop_count = 0;
     max_hop_count |= (packet[11] & 0xF) << 1;
     max_hop_count |= packet[12] >> 7;
 }
 
 void get_checksum(unsigned char packet[]){
     //checksum
+    checksum = 0;
     checksum |= (packet[12] & 0x7F) << 16; 
     checksum |= packet[13] <<8;
     checksum |= packet[14];
@@ -65,14 +71,17 @@ void get_checksum(unsigned char packet[]){
 
 void get_compression_scheme(unsigned char packet[]){
     //compression scheme;
+    compress_scheme = 0; 
     compress_scheme |= packet[15] >> 6;
 }
 
 void get_traffic_class(unsigned char packet[]){
     //traffic class
+    traff_class = 0;
     traff_class |= (packet[15] & 0x3F);
 }
 void get_payload(unsigned char packet[]){
+    payload_count = 0;
     //payload 
     for(unsigned int x = 16, y = 0; x <= packet_len-1; x+= 4, y++){
         payload[y] = packet[x] << 24;
@@ -115,7 +124,8 @@ void print_packet_sf(unsigned char packet[]){
 unsigned int compute_checksum_sf(unsigned char packet[])
 {   
     unsigned int result = 0;
-    unsigned int payload_total;
+    unsigned int payload_total = 0;
+    printf("testing:   %d", payload_total);
     get_src_addr(packet);
     get_dest_addr(packet);
     get_source_port( packet);
