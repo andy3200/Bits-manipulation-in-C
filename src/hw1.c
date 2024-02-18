@@ -125,7 +125,6 @@ unsigned int compute_checksum_sf(unsigned char packet[])
 {   
     unsigned int result = 0;
     unsigned int payload_total = 0;
-    printf("testing:   %d", payload_total);
     get_src_addr(packet);
     get_dest_addr(packet);
     get_source_port( packet);
