@@ -82,7 +82,6 @@ void print_packet_sf(unsigned char packet[])
         printf(" %d", payload[x]);
     }
     printf("\n");
-
 }
 
 unsigned int compute_checksum_sf(unsigned char packet[])
