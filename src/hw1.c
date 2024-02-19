@@ -10,8 +10,8 @@ unsigned int max_hop_count = 0;
 unsigned int checksum = 0;
 unsigned int compress_scheme = 0;
 unsigned int traff_class = 0;
-int payload[100];
-int payload_count = 0;  
+int payload[50];
+unsigned int payload_count = 0;  
 void get_src_addr(unsigned char packet[]){
     //source address
     source_addr = packet[0] << 20;
@@ -115,7 +115,7 @@ void print_packet_sf(unsigned char packet[]){
     printf("Compression Scheme: %d\n", compress_scheme);
     printf("Traffic Class: %d\n", traff_class);
     printf("Payload:");
-    for(int x =0; x <= payload_count-1; x++){
+    for(unsigned int x =0; x <= payload_count-1; x++){
         printf(" %d", payload[x]);
     }
     printf("\n");
@@ -135,7 +135,7 @@ unsigned int compute_checksum_sf(unsigned char packet[])
     get_compression_scheme( packet);
     get_traffic_class(packet);
     get_payload(packet);
-    for(int x =0; x <= payload_count-1; x++){
+    for(unsigned int x =0; x <= payload_count-1; x++){
         payload_total = payload_total + (abs(payload[x]));
     }
     result = (source_addr + destination_addr + source_port + destination_port + fragment_offset + packet_len + max_hop_count + compress_scheme + traff_class + payload_total)% (8388607);
@@ -152,7 +152,8 @@ unsigned int reconstruct_array_sf(unsigned char *packets[], unsigned int packets
         unsigned int calculated_checksum = compute_checksum_sf(packets[x]);
         if((checksum == calculated_checksum) && (start_index <= array_len-1)){// start putting in stuff into the array 
             get_payload(packets[x]);
-            for(size_t y = start_index, z = 0; y <= array_len-1; y++, z++){
+
+            for(unsigned int y = start_index, z = 0; y <= array_len-1 && z <= payload_count-1; y++, z++){
                 array[y] = payload[z];
                 insert_count++; 
             }
