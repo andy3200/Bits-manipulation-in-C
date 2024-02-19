@@ -153,7 +153,7 @@ unsigned int reconstruct_array_sf(unsigned char *packets[], unsigned int packets
         if((checksum == calculated_checksum) && (start_index <= array_len-1)){// start putting in stuff into the array 
             get_payload(packets[x]);
             for(size_t y = start_index, z = 0; y <= array_len-1; y++, z++){
-                array[y] = payload[x];
+                array[y] = payload[z];
                 insert_count++; 
             }
         }
