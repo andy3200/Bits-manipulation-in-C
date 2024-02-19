@@ -167,17 +167,35 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
                           unsigned int src_port, unsigned int dest_port, unsigned int maximum_hop_count,
                           unsigned int compression_scheme, unsigned int traffic_class)
 {
-    (void)array;
-    (void)array_len;
-    (void)packets;
-    (void)packets_len;
-    (void)max_payload;
-    (void)src_addr;
-    (void)dest_addr;
-    (void)src_port;
-    (void)dest_port;
-    (void)maximum_hop_count;
-    (void)compression_scheme;
-    (void)traffic_class;
-    return -1;
+    // calculating number of packets.
+    unsigned int int_per_pack = (max_payload / 4);
+    unsigned int num_pack = (array_len / int_per_pack);
+    unsigned int num_half_pack = 0; 
+    unsigned int packs_created; 
+    unsigned int pack_length =0; 
+    unsigned int frag_off =0;
+    unsigned int current_array_index = 0; 
+    if((array_len % int_per_pack) != 0){
+        num_half_pack++; 
+    }
+    unsigned int total_packets; 
+    for(unsigned int x; x <= packet_len-1 && x <= total_packets -1; x++){//iteratre through the array of packets
+        if(packs_created == num_pack && num_half_pack != 0){ //creating a half size package 
+            unsigned int int_half_pack = array_len % int_per_pack; //number of ints to be put into the payload of half size package 
+            pack_length = 16 + (int_half_pack*4);
+        }else{//full size packs 
+            pack_length = 16 + (int_per_pack*4);
+        }
+        packets[x] = (char*)malloc(pack_length);
+        packs_created++;
+        unsigned int frag_off = current_array_index *4; 
+        current_array_index = current_array_index + int_per_pack;
+        for(unsigned int y = 0; y <= pack_length-1; y++){//iterate through each packet
+
+        }
+
+   }
+
+    
+
 }
