@@ -10,7 +10,7 @@ unsigned int max_hop_count = 0;
 unsigned int checksum = 0;
 unsigned int compress_scheme = 0;
 unsigned int traff_class = 0;
-int payload[10];
+int payload[100];
 int payload_count = 0;  
 void get_src_addr(unsigned char packet[]){
     //source address
