@@ -144,9 +144,8 @@ unsigned int compute_checksum_sf(unsigned char packet[])
 }
 
 unsigned int reconstruct_array_sf(unsigned char *packets[], unsigned int packets_len, int *array, unsigned int array_len) {
-    size_t packets_num = sizeof(packets) / sizeof(packets[0]);
     unsigned int insert_count = 0; 
-    for(size_t x = 0; x <= packets_num-1; x++){
+    for(size_t x = 0; x <= packets_len-1; x++){
         get_frag_offset(packets[x]); //get the fragment offset 
         unsigned int start_index = (fragment_offset / (int) 4); //the starting index at the array to be put in 
         get_checksum(packets[x]); //get the original checksum of the current packet 
