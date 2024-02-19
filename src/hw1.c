@@ -175,27 +175,67 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
     unsigned int pack_length =0; 
     unsigned int frag_off =0;
     unsigned int current_array_index = 0; 
+    int current_in_half_pack =0; //whether we are curretnly in a half size pack. 0 if no 1 if yes 
     if((array_len % int_per_pack) != 0){
         num_half_pack++; 
     }
-    unsigned int total_packets; 
+    unsigned int total_packets = num_pack + num_half_pack; 
     for(unsigned int x; x <= packet_len-1 && x <= total_packets -1; x++){//iteratre through the array of packets
+        current_in_half_pack =0;
         if(packs_created == num_pack && num_half_pack != 0){ //creating a half size package 
             unsigned int int_half_pack = array_len % int_per_pack; //number of ints to be put into the payload of half size package 
             pack_length = 16 + (int_half_pack*4);
+            current_in_half_pack =1; 
         }else{//full size packs 
             pack_length = 16 + (int_per_pack*4);
         }
-        packets[x] = (char*)malloc(pack_length);
+        packets[x] = (char*)malloc(pack_length); //allocate memory for the packet 
         packs_created++;
         unsigned int frag_off = current_array_index *4; 
-        current_array_index = current_array_index + int_per_pack;
-        for(unsigned int y = 0; y <= pack_length-1; y++){//iterate through each packet
+        //source address
+        packets[x][0] |= (char)((src_addr>>20) & 0xFF);
+        packets[x][1] |= (char)((src_addr>>12) & 0xFF);
+        packets[x][2] |= (char)((src_addr>>4) & 0xFF);
+        packets[x][3] |= (char)((src_addr & 0xF) << 4);
 
+        //destination address
+        packets[x][3] |= (char)(((dest_addr>>24) & 0xF));
+        packets[x][4] |= (char)((dest_addr>>16) & 0xFF);
+        packets[x][5] |= (char)((dest_addr>>8) & 0xFF);
+        packets[x][6] = (char)((dest_addr) & 0xFF);
+
+        //Source Port
+        packets[x][7] |= (char)(((src_port) & 0xF) <<4);
+
+        //Destination Port
+        packets[x][7] |= (char)(((dest_port) & 0xF));
+
+        //fragment offset 
+        packets[x][8] |= (char)(((frag_off >>6) & 0xFF));
+        packets[x][9] |= (char)(((frag_off) & 0x3F) << 2);
+
+        //Packet Length
+        packets[x][9] |= (char)(((pack_length >>12) & 0x3));
+        packets[x][10] |= (char)(((pack_length >>4) & 0xFF));
+        packets[x][11] |= (char)(((pack_length) & 0xF) << 4);
+
+        //Max Hop Count 
+        packets[x][11] |= (char)(((maximum_hop_count>>1) & 0xF));
+        packets[x][12] |= (char)(((maximum_hop_count) & 0x1) << 7);
+
+        //compression scheme
+        packets[x][15] |= (char)(((compression_scheme) & 0x3) << 6);
+
+        //Traffic Class
+        packets[x][15] |= (char)(((traffic_class) & 0x3F));
+
+        //payload
+        for(unsigned int d = 16; d <=pack_length-1;d = d+4){
+                packets[x][d] |= (char)((array[current_array_index] >> 24));
+                packets[x][d+1] |= (char)(((array[current_array_index] >> 16)));
+                packets[x][d+2] |= (char)(((array[current_array_index] >> 8)));
+                packets[x][d+3] |= (char)(((array[current_array_index])));
+                current_array_index++; 
         }
-
-   }
-
-    
 
 }
