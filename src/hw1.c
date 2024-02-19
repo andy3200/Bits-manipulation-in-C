@@ -171,27 +171,24 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
     unsigned int int_per_pack = (max_payload / 4);
     unsigned int num_pack = (array_len / int_per_pack);
     unsigned int num_half_pack = 0; 
-    unsigned int packs_created; 
+    unsigned int packs_created = 0; 
     unsigned int pack_length =0; 
     unsigned int frag_off =0;
     unsigned int current_array_index = 0; 
-    int current_in_half_pack =0; //whether we are curretnly in a half size pack. 0 if no 1 if yes 
     if((array_len % int_per_pack) != 0){
         num_half_pack++; 
     }
     unsigned int total_packets = num_pack + num_half_pack; 
-    for(unsigned int x; x <= packet_len-1 && x <= total_packets -1; x++){//iteratre through the array of packets
-        current_in_half_pack =0;
-        if(packs_created == num_pack && num_half_pack != 0){ //creating a half size package 
+    for(unsigned int x =0; x <= packets_len-1 && x <= total_packets -1; x++){//iteratre through the array of packets
+        if((packs_created == num_pack) && (num_half_pack != 0)){ //creating a half size package 
             unsigned int int_half_pack = array_len % int_per_pack; //number of ints to be put into the payload of half size package 
             pack_length = 16 + (int_half_pack*4);
-            current_in_half_pack =1; 
         }else{//full size packs 
             pack_length = 16 + (int_per_pack*4);
         }
-        packets[x] = (char*)malloc(pack_length); //allocate memory for the packet 
+        packets[x] = (unsigned char*)malloc(pack_length); //allocate memory for the packet 
         packs_created++;
-        unsigned int frag_off = current_array_index *4; 
+        frag_off = current_array_index *4; 
         //source address
         packets[x][0] |= (char)((src_addr>>20) & 0xFF);
         packets[x][1] |= (char)((src_addr>>12) & 0xFF);
@@ -237,5 +234,12 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
                 packets[x][d+3] |= (char)(((array[current_array_index])));
                 current_array_index++; 
         }
+        //checksum
+        unsigned int checksum_pack = compute_checksum_sf(packets[x]);
+        packets[x][12] |= (char)(((checksum_pack>>16) & 0x7F));
+        packets[x][13] |= (char)(((checksum_pack>>8) & 0xFF));
+        packets[x][13] |= (char)(((checksum_pack) & 0xFF));
+    }
+    return packs_created;
 
 }
