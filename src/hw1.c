@@ -228,10 +228,18 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
 
         //payload
         for(unsigned int d = 16; d <=pack_length-1;d = d+4){
+                if(d <= pack_length-1){
                 packets[x][d] |= (unsigned char)((array[current_array_index] >> 24));
+                }
+                if(d+1 <= pack_length-1){
                 packets[x][d+1] |= (unsigned char)(((array[current_array_index] >> 16)));
+                }
+                if(d+2 <= pack_length-1){
                 packets[x][d+2] |= (unsigned char)(((array[current_array_index] >> 8)));
+                }
+                if(d+3 <= pack_length-1){
                 packets[x][d+3] |= (unsigned char)(((array[current_array_index])));
+                }
                 current_array_index++; 
         }
         //checksum
