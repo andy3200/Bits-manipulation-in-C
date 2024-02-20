@@ -199,7 +199,7 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         packets[x][3] |= (char)(((dest_addr>>24) & 0xF));
         packets[x][4] |= (char)((dest_addr>>16) & 0xFF);
         packets[x][5] |= (char)((dest_addr>>8) & 0xFF);
-        packets[x][6] = (char)((dest_addr) & 0xFF);
+        packets[x][6] |= (char)((dest_addr) & 0xFF);
 
         //Source Port
         packets[x][7] |= (char)(((src_port) & 0xF) <<4);
@@ -238,7 +238,7 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         unsigned int checksum_pack = compute_checksum_sf(packets[x]);
         packets[x][12] |= (char)(((checksum_pack>>16) & 0x7F));
         packets[x][13] |= (char)(((checksum_pack>>8) & 0xFF));
-        packets[x][13] |= (char)(((checksum_pack) & 0xFF));
+        packets[x][14] |= (char)(((checksum_pack) & 0xFF));
     }
     return packs_created;
 
