@@ -190,55 +190,55 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         packs_created++;
         frag_off = current_array_index *4; 
         //source address
-        packets[x][0] |= (char)((src_addr>>20) & 0xFF);
-        packets[x][1] |= (char)((src_addr>>12) & 0xFF);
-        packets[x][2] |= (char)((src_addr>>4) & 0xFF);
-        packets[x][3] |= (char)((src_addr & 0xF) << 4);
+        packets[x][0] |= (unsigned char)((src_addr>>20) & 0xFF);
+        packets[x][1] |= (unsigned char)((src_addr>>12) & 0xFF);
+        packets[x][2] |= (unsigned char)((src_addr>>4) & 0xFF);
+        packets[x][3] |= (unsigned char)((src_addr & 0xF) << 4);
 
         //destination address
-        packets[x][3] |= (char)(((dest_addr>>24) & 0xF));
-        packets[x][4] |= (char)((dest_addr>>16) & 0xFF);
-        packets[x][5] |= (char)((dest_addr>>8) & 0xFF);
-        packets[x][6] |= (char)((dest_addr) & 0xFF);
+        packets[x][3] |= (unsigned char)(((dest_addr>>24) & 0xF));
+        packets[x][4] |= (unsigned char)((dest_addr>>16) & 0xFF);
+        packets[x][5] |= (unsigned char)((dest_addr>>8) & 0xFF);
+        packets[x][6] |= (unsigned char)((dest_addr) & 0xFF);
 
         //Source Port
-        packets[x][7] |= (char)(((src_port) & 0xF) <<4);
+        packets[x][7] |= (unsigned char)(((src_port) & 0xF) <<4);
 
         //Destination Port
-        packets[x][7] |= (char)(((dest_port) & 0xF));
+        packets[x][7] |= (unsigned char)(((dest_port) & 0xF));
 
         //fragment offset 
-        packets[x][8] |= (char)(((frag_off >>6) & 0xFF));
-        packets[x][9] |= (char)(((frag_off) & 0x3F) << 2);
+        packets[x][8] |= (unsigned char)(((frag_off >>6) & 0xFF));
+        packets[x][9] |= (unsigned char)(((frag_off) & 0x3F) << 2);
 
         //Packet Length
-        packets[x][9] |= (char)(((pack_length >>12) & 0x3));
-        packets[x][10] |= (char)(((pack_length >>4) & 0xFF));
-        packets[x][11] |= (char)(((pack_length) & 0xF) << 4);
+        packets[x][9] |= (unsigned char)(((pack_length >>12) & 0x3));
+        packets[x][10] |= (unsigned char)(((pack_length >>4) & 0xFF));
+        packets[x][11] |= (unsigned char)(((pack_length) & 0xF) << 4);
 
         //Max Hop Count 
-        packets[x][11] |= (char)(((maximum_hop_count>>1) & 0xF));
-        packets[x][12] |= (char)(((maximum_hop_count) & 0x1) << 7);
+        packets[x][11] |= (unsigned char)(((maximum_hop_count>>1) & 0xF));
+        packets[x][12] |= (unsigned char)(((maximum_hop_count) & 0x1) << 7);
 
         //compression scheme
-        packets[x][15] |= (char)(((compression_scheme) & 0x3) << 6);
+        packets[x][15] |= (unsigned char)(((compression_scheme) & 0x3) << 6);
 
         //Traffic Class
-        packets[x][15] |= (char)(((traffic_class) & 0x3F));
+        packets[x][15] |= (unsigned char)(((traffic_class) & 0x3F));
 
         //payload
         for(unsigned int d = 16; d <=pack_length-1;d = d+4){
-                packets[x][d] |= (char)((array[current_array_index] >> 24));
-                packets[x][d+1] |= (char)(((array[current_array_index] >> 16)));
-                packets[x][d+2] |= (char)(((array[current_array_index] >> 8)));
-                packets[x][d+3] |= (char)(((array[current_array_index])));
+                packets[x][d] |= (unsigned char)((array[current_array_index] >> 24));
+                packets[x][d+1] |= (unsigned char)(((array[current_array_index] >> 16)));
+                packets[x][d+2] |= (unsigned char)(((array[current_array_index] >> 8)));
+                packets[x][d+3] |= (unsigned char)(((array[current_array_index])));
                 current_array_index++; 
         }
         //checksum
         unsigned int checksum_pack = compute_checksum_sf(packets[x]);
-        packets[x][12] |= (char)(((checksum_pack>>16) & 0x7F));
-        packets[x][13] |= (char)(((checksum_pack>>8) & 0xFF));
-        packets[x][14] |= (char)(((checksum_pack) & 0xFF));
+        packets[x][12] |= (unsigned char)(((checksum_pack>>16) & 0x7F));
+        packets[x][13] |= (unsigned char)(((checksum_pack>>8) & 0xFF));
+        packets[x][14] |= (unsigned char)(((checksum_pack) & 0xFF));
     }
     return packs_created;
 
