@@ -189,6 +189,24 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         packets[x] = (unsigned char*)malloc(pack_length); //allocate memory for the packet 
         packs_created++;
         frag_off = current_array_index *4; 
+        //initialize
+        packets[x][0] = 0;
+        packets[x][1] = 0;
+        packets[x][2] = 0;
+        packets[x][3] = 0;
+        packets[x][4] = 0;
+        packets[x][5] = 0;
+        packets[x][6] = 0;
+        packets[x][7] = 0;
+        packets[x][8] = 0;
+        packets[x][9] = 0;
+        packets[x][10] = 0;
+        packets[x][11] = 0;
+        packets[x][12] = 0;
+        packets[x][13] = 0;
+        packets[x][14] = 0;
+        packets[x][15] = 0;
+
         //source address
         packets[x][0] |= (unsigned char)((src_addr>>20) & 0xFF);
         packets[x][1] |= (unsigned char)((src_addr>>12) & 0xFF);
@@ -196,6 +214,11 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         packets[x][3] |= (unsigned char)((src_addr & 0xF) << 4);
 
         //destination address
+        packets[x][4] = 0;
+        packets[x][5] = 0;
+        packets[x][6] = 0;
+        packets[x][7] = 0;
+
         packets[x][3] |= (unsigned char)(((dest_addr>>24) & 0xF));
         packets[x][4] |= (unsigned char)((dest_addr>>16) & 0xFF);
         packets[x][5] |= (unsigned char)((dest_addr>>8) & 0xFF);
@@ -229,15 +252,19 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         //payload
         for(unsigned int d = 16; d <=pack_length-1;d = d+4){
                 if(d <= pack_length-1){
+                packets[x][d] = 0 ;
                 packets[x][d] |= ((array[current_array_index] >> 24));
                 }
                 if(d+1 <= pack_length-1){
+                packets[x][d+1] = 0;    
                 packets[x][d+1] |= (((array[current_array_index] >> 16)));
                 }
                 if(d+2 <= pack_length-1){
+                packets[x][d+2] = 0;
                 packets[x][d+2] |= (((array[current_array_index] >> 8)));
                 }
                 if(d+3 <= pack_length-1){
+                packets[x][d+3] = 0;
                 packets[x][d+3] |= (((array[current_array_index])));
                 }
                 current_array_index++; 
